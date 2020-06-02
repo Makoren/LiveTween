@@ -61,7 +61,7 @@ namespace Editor
 
         public static void GetTweenData(Form1 form)
         {
-            Socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(form.GetTweenDataCallback), null);
+            Socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(form.GetTweenDataCallback), state);
         }
     }
 

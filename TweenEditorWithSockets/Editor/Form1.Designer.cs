@@ -33,6 +33,7 @@
             this.easeTypeField = new System.Windows.Forms.ComboBox();
             this.easeTypeLabel = new System.Windows.Forms.Label();
             this.waitingLabel = new System.Windows.Forms.Label();
+            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // durationLabel
@@ -108,6 +109,7 @@
         private System.Windows.Forms.ComboBox easeTypeField;
         private System.Windows.Forms.Label easeTypeLabel;
         private System.Windows.Forms.Label waitingLabel;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
     }
 }
 
