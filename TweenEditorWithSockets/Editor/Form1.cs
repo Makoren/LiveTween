@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using LiveTween;
+using System.Threading.Tasks;
 
 namespace Editor
 {
@@ -38,14 +39,13 @@ namespace Editor
                 ClientSocket.WaitForGameConnection();
                 ShowControls();
 
-                string data = ClientSocket.WaitForTweenData();
+                string data = await ClientSocket.GetTweenData();
 
                 JMessage message = JMessage.Deserialize(data);
                 if (message.Type == typeof(Tween))
                 {
                     Tween tween = message.Value.ToObject<Tween>();
                     durationField.Text = tween.Duration.ToString();
-                    var temp = nameof(tween.EasingType);
                     easeTypeField.SelectedItem = tween.EasingType;
                 }
                 else

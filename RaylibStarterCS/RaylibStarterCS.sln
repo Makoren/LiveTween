@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project2D", "Project2D\Proj
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Raylib", "Raylib\Bindings\Raylib.shproj", "{F660FF67-D70E-4AE0-9080-D922243E9B6E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveTween", "..\CGSAssessment\LiveTween\LiveTween\LiveTween.csproj", "{0538A833-E213-4B43-8582-A93B7752DF90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveTween", "..\LiveTween\LiveTween\LiveTween.csproj", "{0538A833-E213-4B43-8582-A93B7752DF90}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

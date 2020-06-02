@@ -11,6 +11,8 @@ namespace Editor
     public class ClientSocket
     {
         public static Socket Socket { get; private set; }
+        public static string response = string.Empty;
+        public static byte[] buffer = new byte[BufferSize];
 
         public static bool ConnectToServer()
         {
@@ -56,20 +58,33 @@ namespace Editor
             }
         }
 
-        public static string WaitForTweenData()
+        public static async Task<string> GetTweenData()
         {
-            byte[] bytes = new Byte[1024];
+            StateObject state = new StateObject();
 
             while (true)
             {
-                int bytesRec = Socket.Receive(bytes);
-                string data = Encoding.ASCII.GetString(bytes, 0, bytesRec);
-
-                if (data.Contains("LiveTween"))
-                {
-                    return data;
-                }
+                Socket.BeginReceive(buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(GetTweenDataCallback), null);
             }
         }
+
+        private static void GetTweenDataCallback(IAsyncResult ar)
+        {
+            StateObject state = (StateObject)ar.AsyncState;
+
+            int bytesRead = Socket.EndReceive(ar);
+            string data = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+
+            if (data.Contains("LiveTween"))
+            {
+                response = data;
+            }
+        }
+    }
+
+    public class StateObject
+    {
+        public const int BufferSize = 256;
+        
     }
 }

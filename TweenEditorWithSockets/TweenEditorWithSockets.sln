@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editor", "Editor\Editor.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{34C5450B-E31B-4A66-BC9D-649E03DDC627}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveTween", "..\CGSAssessment\LiveTween\LiveTween\LiveTween.csproj", "{E13EFA81-C565-4F8B-BD84-4A4F872A5804}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveTween", "..\LiveTween\LiveTween\LiveTween.csproj", "{E13EFA81-C565-4F8B-BD84-4A4F872A5804}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

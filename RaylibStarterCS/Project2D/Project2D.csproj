@@ -57,7 +57,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CGSAssessment\LiveTween\LiveTween\LiveTween.csproj">
+    <ProjectReference Include="..\..\LiveTween\LiveTween\LiveTween.csproj">
       <Project>{0538a833-e213-4b43-8582-a93b7752df90}</Project>
       <Name>LiveTween</Name>
     </ProjectReference>

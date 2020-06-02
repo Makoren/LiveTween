@@ -85,7 +85,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CGSAssessment\LiveTween\LiveTween\LiveTween.csproj">
+    <ProjectReference Include="..\..\LiveTween\LiveTween\LiveTween.csproj">
       <Project>{e13efa81-c565-4f8b-bd84-4a4f872a5804}</Project>
       <Name>LiveTween</Name>
     </ProjectReference>
