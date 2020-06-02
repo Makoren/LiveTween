@@ -13,7 +13,6 @@ namespace Editor
     {
         public static Socket Socket { get; private set; }
         public static string Response = string.Empty;
-        public static StateObject state = new StateObject();
 
         public static bool ConnectToServer()
         {
@@ -58,16 +57,5 @@ namespace Editor
                 if (data == "connect") break;
             }
         }
-
-        public static void GetTweenData(Form1 form)
-        {
-            Socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(form.GetTweenDataCallback), state);
-        }
-    }
-
-    public class StateObject
-    {
-        public const int BufferSize = 256;
-        public byte[] buffer = new byte[BufferSize];
     }
 }

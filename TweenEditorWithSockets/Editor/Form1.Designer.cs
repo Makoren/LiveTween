@@ -33,7 +33,8 @@
             this.easeTypeField = new System.Windows.Forms.ComboBox();
             this.easeTypeLabel = new System.Windows.Forms.Label();
             this.waitingLabel = new System.Windows.Forms.Label();
-            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.tweenDataWorker = new System.ComponentModel.BackgroundWorker();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // durationLabel
@@ -84,11 +85,26 @@
             this.waitingLabel.Text = "Connecting...";
             this.waitingLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // tweenDataWorker
+            // 
+            this.tweenDataWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.tdwDoWork);
+            this.tweenDataWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.tdwRunWorkerCompleted);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 102);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(84, 13);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "Worker is active";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(237, 92);
+            this.ClientSize = new System.Drawing.Size(237, 124);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.waitingLabel);
             this.Controls.Add(this.easeTypeLabel);
             this.Controls.Add(this.easeTypeField);
@@ -109,7 +125,8 @@
         private System.Windows.Forms.ComboBox easeTypeField;
         private System.Windows.Forms.Label easeTypeLabel;
         private System.Windows.Forms.Label waitingLabel;
-        private System.ComponentModel.BackgroundWorker backgroundWorker;
+        private System.ComponentModel.BackgroundWorker tweenDataWorker;
+        private System.Windows.Forms.Label label1;
     }
 }
 

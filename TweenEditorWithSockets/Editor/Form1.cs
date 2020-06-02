@@ -12,6 +12,8 @@ namespace Editor
 {
     public partial class Form1 : Form
     {
+        private static string tweenData = string.Empty;
+
         public Form1()
         {
             InitializeComponent();
@@ -40,32 +42,7 @@ namespace Editor
                 ClientSocket.WaitForGameConnection();
                 ShowControls();
 
-                ClientSocket.GetTweenData(this);
-            }
-        }
-        
-        public void GetTweenDataCallback(IAsyncResult ar)
-        {
-            ClientSocket.state = (StateObject)ar.AsyncState;
-
-            int bytesRead = ClientSocket.Socket.EndReceive(ar);
-            string data = Encoding.ASCII.GetString(ClientSocket.state.buffer, 0, bytesRead);
-
-            if (data.Contains("LiveTween"))
-            {
-                JMessage message = JMessage.Deserialize(data);
-                if (message.Type == typeof(Tween))
-                {
-                    Tween tween = message.Value.ToObject<Tween>();
-                    durationField.Text = tween.Duration.ToString();
-                    easeTypeField.SelectedItem = tween.EasingType;
-                }
-                else
-                {
-                    throw new Exception();
-                }
-
-                ClientSocket.GetTweenData(this);
+                tweenDataWorker.RunWorkerAsync();
             }
         }
 
@@ -76,6 +53,31 @@ namespace Editor
             durationField.Visible = true;
             easeTypeLabel.Visible = true;
             easeTypeField.Visible = true;
+        }
+
+        private void tdwDoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            byte[] bytes = new byte[256];
+            int bytesRec = ClientSocket.Socket.Receive(bytes);
+            tweenData = Encoding.ASCII.GetString(bytes, 0, bytesRec);
+        }
+
+        private void tdwRunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            if (tweenData.Contains("LiveTween"))
+            {
+                JMessage message = JMessage.Deserialize(tweenData);
+                if (message.Type == typeof(Tween))
+                {
+                    Tween tween = message.Value.ToObject<Tween>();
+                    durationField.Text = tween.Duration.ToString();
+                    easeTypeField.SelectedItem = tween.EasingType;
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
         }
     }
 }
