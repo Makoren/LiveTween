@@ -70,7 +70,7 @@ namespace Editor
                 JMessage message = JMessage.Deserialize(tweenData);
                 if (message.Type == typeof(Tween))
                 {
-                    Tween tween = message.Value.ToObject<Tween>();
+                    tween = message.Value.ToObject<Tween>();
                     durationField.Text = tween.Duration.ToString();
                     easeTypeField.SelectedItem = tween.EasingType;
                 }
@@ -83,17 +83,13 @@ namespace Editor
 
         private void UpdateTween(object sender, EventArgs e)
         {
-            if (tween != null)
-            {
-                string tweenData = JMessage.Serialize(JMessage.FromValue(tween));
+            Tween tween = new Tween();
+            tween.Duration = float.Parse(durationField.Text);
+            tween.EasingType = (EasingType)Enum.Parse(typeof(EasingType), easeTypeField.Text);
+            string tweenData = JMessage.Serialize(JMessage.FromValue(tween));
 
-                byte[] msg = Encoding.ASCII.GetBytes(tweenData);
-                ClientSocket.Socket.Send(msg);
-            }
-            else
-            {
-                Console.WriteLine("Tween data is empty. Cannot send.");
-            }
+            byte[] msg = Encoding.ASCII.GetBytes(tweenData);
+            ClientSocket.Socket.Send(msg);
         }
     }
 }

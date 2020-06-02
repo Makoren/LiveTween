@@ -34,7 +34,7 @@
             this.easeTypeLabel = new System.Windows.Forms.Label();
             this.waitingLabel = new System.Windows.Forms.Label();
             this.tweenDataWorker = new System.ComponentModel.BackgroundWorker();
-            this.label1 = new System.Windows.Forms.Label();
+            this.updateTweenButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // durationLabel
@@ -54,7 +54,6 @@
             this.durationField.Size = new System.Drawing.Size(121, 20);
             this.durationField.TabIndex = 1;
             this.durationField.Visible = false;
-            this.durationField.Leave += new System.EventHandler(this.UpdateTween);
             // 
             // easeTypeField
             // 
@@ -91,26 +90,28 @@
             this.tweenDataWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.tdwDoWork);
             this.tweenDataWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.tdwRunWorkerCompleted);
             // 
-            // label1
+            // updateTweenButton
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 102);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(84, 13);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "Worker is active";
+            this.updateTweenButton.Location = new System.Drawing.Point(17, 89);
+            this.updateTweenButton.Name = "updateTweenButton";
+            this.updateTweenButton.Size = new System.Drawing.Size(201, 23);
+            this.updateTweenButton.TabIndex = 6;
+            this.updateTweenButton.Text = "Update Tween";
+            this.updateTweenButton.UseVisualStyleBackColor = true;
+            this.updateTweenButton.Click += new System.EventHandler(this.UpdateTween);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(237, 124);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.updateTweenButton);
             this.Controls.Add(this.waitingLabel);
             this.Controls.Add(this.easeTypeLabel);
             this.Controls.Add(this.easeTypeField);
             this.Controls.Add(this.durationField);
             this.Controls.Add(this.durationLabel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "Form1";
             this.Text = "Form1";
             this.Shown += new System.EventHandler(this.OnShown);
@@ -127,7 +128,7 @@
         private System.Windows.Forms.Label easeTypeLabel;
         private System.Windows.Forms.Label waitingLabel;
         private System.ComponentModel.BackgroundWorker tweenDataWorker;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button updateTweenButton;
     }
 }
 

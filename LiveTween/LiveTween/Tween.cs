@@ -35,6 +35,17 @@ namespace LiveTween
         private bool isPlaying;
         private string tweenData = string.Empty;
 
+        private BackgroundWorker bgw;
+
+        /// <summary>
+        /// Sets up a default constructor with a duration of 1 and easing type of Linear. Does not enable LiveTween.
+        /// </summary>
+        public Tween()
+        {
+            EasingType = EasingType.Linear;
+            Duration = 1;
+        }
+
         /// <summary>
         /// Create a new tween.
         /// </summary>
@@ -58,7 +69,7 @@ namespace LiveTween
         /// </summary>
         private void StartListener()
         {
-            BackgroundWorker bgw = new BackgroundWorker();
+            bgw = new BackgroundWorker();
             bgw.DoWork += bgwDoWork;
             bgw.RunWorkerCompleted += bgwRunWorkerCompleted;
 
@@ -97,6 +108,8 @@ namespace LiveTween
                     throw new Exception();
                 }
             }
+
+            bgw.RunWorkerAsync();
         }
 
         /// <summary>

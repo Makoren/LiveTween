@@ -14,8 +14,6 @@ public class ServerSocket
 
     public static void StartListening()
     {
-        byte[] bytes = new Byte[1024];
-
         IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
         IPAddress ipAddress = ipHostInfo.AddressList[0];
         IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 11000);
@@ -28,9 +26,11 @@ public class ServerSocket
             listener.Bind(localEndPoint);
             listener.Listen(10);
 
+            byte[] bytes = new Byte[1024];
             ConnectToEditor(bytes, listener);
             ConnectToGame(bytes, listener);
-            WaitForTweenData(bytes);
+            WaitForTweenDataFromEditor();
+            WaitForTweenDataFromGame();
         }
         catch (Exception e)
         {
@@ -40,14 +40,20 @@ public class ServerSocket
         Console.ReadKey(true);
     }
 
-    private static void WaitForTweenData(byte[] bytes)
+    private static void WaitForTweenDataFromGame()
     {
-        Console.WriteLine("Waiting for tween data...");
+        Console.WriteLine("Waiting for tween data from game...");
+
+        StateObject gameState = new StateObject();
+        gameSocket.BeginReceive(gameState.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(GameDataCallback), gameState);
+    }
+
+    private static void WaitForTweenDataFromEditor()
+    {
+        Console.WriteLine("Waiting for tween data from editor...");
 
         StateObject editorState = new StateObject();
-        StateObject gameState = new StateObject();
         editorSocket.BeginReceive(editorState.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(EditorDataCallback), editorState);
-        gameSocket.BeginReceive(gameState.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(GameDataCallback), gameState); 
     }
 
     private static void EditorDataCallback(IAsyncResult ar)
@@ -65,7 +71,7 @@ public class ServerSocket
             gameSocket.Send(buffer);
         }
 
-        editorSocket.BeginReceive(editorState.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(EditorDataCallback), editorState);
+        WaitForTweenDataFromEditor();
     }
 
     private static void GameDataCallback(IAsyncResult ar)
@@ -83,7 +89,7 @@ public class ServerSocket
             editorSocket.Send(buffer);
         }
 
-        gameSocket.BeginReceive(gameState.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(GameDataCallback), gameState);
+        WaitForTweenDataFromGame();
     }
 
     private static void ConnectToGame(byte[] bytes, Socket listener)
