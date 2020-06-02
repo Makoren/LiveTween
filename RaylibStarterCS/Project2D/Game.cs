@@ -9,7 +9,7 @@ namespace Project2D
     {
         Image logo;
         Texture2D texture;
-        string logText = String.Empty;
+        string logText = string.Empty;
 
         Tween tween;
 

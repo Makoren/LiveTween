@@ -4,8 +4,11 @@ using System.Net.Sockets;
 using System.Text;
 
 public class ServerSocket
-{ 
-    public static string data = null;
+{
+    public static string connectData = null;
+    public static string editorData = null;
+    public static string gameData = null;
+
     private static Socket editorSocket;
     private static Socket gameSocket;
 
@@ -24,69 +27,10 @@ public class ServerSocket
         {
             listener.Bind(localEndPoint);
             listener.Listen(10);
- 
-            while (true)
-            {
-                Console.WriteLine("Waiting for connection with editor...");
-                editorSocket = listener.Accept();
-                data = null;
 
-                int bytesRec = editorSocket.Receive(bytes);
-                data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
-
-                if (data == "editor")
-                {
-                    Console.WriteLine("Editor connected.");
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("Editor connection was not received. Disconnecting...");
-                    editorSocket.Shutdown(SocketShutdown.Both);
-                    editorSocket.Close();
-                }
-            }
-
-            while (true)
-            {
-                Console.WriteLine("Waiting for connection with game...");
-
-                gameSocket = listener.Accept();
-                data = null;
-
-                int bytesRec = gameSocket.Receive(bytes);
-                data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
-
-                if (data == "game")
-                {
-                    Console.WriteLine("Game connected.");
-
-                    byte[] msg = Encoding.ASCII.GetBytes("connect");
-                    editorSocket.Send(msg);
-
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("Game connection was not received. Disconnecting...");
-                    editorSocket.Shutdown(SocketShutdown.Both);
-                    editorSocket.Close();
-                }
-            }
-
-            while (true)
-            {
-                Console.WriteLine("Waiting for tween data...");
-                int bytesRec = gameSocket.Receive(bytes);
-                data = Encoding.ASCII.GetString(bytes, 0, bytesRec);
-
-                // Crappy data validation that works but doesn't require JSON parsing
-                if (data.Contains("LiveTween")) break;
-            }
-
-            Console.WriteLine("Received valid data. Sending to editor...");
-            byte[] buffer = Encoding.ASCII.GetBytes(data);
-            editorSocket.Send(buffer);
+            ConnectToEditor(bytes, listener);
+            ConnectToGame(bytes, listener);
+            WaitForTweenData(bytes);
         }
         catch (Exception e)
         {
@@ -95,7 +39,115 @@ public class ServerSocket
 
         Console.WriteLine("\nPress ENTER to continue...");
         Console.Read();
+    }
 
+    private static void WaitForTweenData(byte[] bytes)
+    {
+        Console.WriteLine("Waiting for tween data...");
+
+        StateObject editorState = new StateObject();
+        StateObject gameState = new StateObject();
+        editorSocket.BeginReceive(editorState.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(EditorDataCallback), editorState);
+        gameSocket.BeginReceive(gameState.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(GameDataCallback), gameState); 
+    }
+
+    private static void EditorDataCallback(IAsyncResult ar)
+    {
+        StateObject editorState = (StateObject)ar.AsyncState;
+
+        int bytesRec = editorSocket.EndReceive(ar);
+        editorData = Encoding.ASCII.GetString(editorState.buffer, 0, bytesRec);
+
+        // Crappy data validation that works but doesn't require JSON parsing
+        if (editorData.Contains("LiveTween"))
+        {
+            Console.WriteLine("Received valid data from editor. Sending to game...");
+            byte[] buffer = Encoding.ASCII.GetBytes(editorData);
+            gameSocket.Send(buffer);
+        }
+
+        editorSocket.BeginReceive(editorState.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(EditorDataCallback), editorState);
+    }
+
+    private static void GameDataCallback(IAsyncResult ar)
+    {
+        StateObject gameState = (StateObject)ar.AsyncState;
+
+        int bytesRec = gameSocket.EndReceive(ar);
+        gameData = Encoding.ASCII.GetString(gameState.buffer, 0, bytesRec);
+
+        // Crappy data validation that works but doesn't require JSON parsing
+        if (gameData.Contains("LiveTween"))
+        {
+            Console.WriteLine("Received valid data from game. Sending to editor...");
+            byte[] buffer = Encoding.ASCII.GetBytes(gameData);
+            editorSocket.Send(buffer);
+        }
+
+        gameSocket.BeginReceive(gameState.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(GameDataCallback), gameState);
+    }
+
+    private static void ConnectToGame(byte[] bytes, Socket listener)
+    {
+        while (true)
+        {
+            Console.WriteLine("Waiting for connection with game...");
+
+            gameSocket = listener.Accept();
+            connectData = null;
+
+            int bytesRec = gameSocket.Receive(bytes);
+            connectData += Encoding.ASCII.GetString(bytes, 0, bytesRec);
+
+            if (connectData == "game")
+            {
+                Console.WriteLine("Game connected.");
+
+                byte[] msg = Encoding.ASCII.GetBytes("connect");
+                editorSocket.Send(msg);
+
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Game connection was not received. Disconnecting...");
+                editorSocket.Shutdown(SocketShutdown.Both);
+                editorSocket.Close();
+            }
+        }
+    }
+
+    private static void ConnectToEditor(byte[] bytes, Socket listener)
+    {
+        while (true)
+        {
+            Console.WriteLine("Waiting for connection with editor...");
+            editorSocket = listener.Accept();
+            connectData = null;
+
+            int bytesRec = editorSocket.Receive(bytes);
+            connectData += Encoding.ASCII.GetString(bytes, 0, bytesRec);
+
+            if (connectData == "editor")
+            {
+                Console.WriteLine("Editor connected.");
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Editor connection was not received. Disconnecting...");
+                editorSocket.Shutdown(SocketShutdown.Both);
+                editorSocket.Close();
+            }
+        }
+    }
+
+    public class StateObject
+    {
+        public Socket workSocket = null;
+        public const int BufferSize = 1024;
+        public byte[] buffer = new byte[BufferSize];
+        public StringBuilder sb = new StringBuilder();
     }
 
     public static int Main(String[] args)
