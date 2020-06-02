@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using LiveTween;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace Editor
 {
@@ -39,8 +40,19 @@ namespace Editor
                 ClientSocket.WaitForGameConnection();
                 ShowControls();
 
-                string data = await ClientSocket.GetTweenData();
+                ClientSocket.GetTweenData(this);
+            }
+        }
+        
+        public void GetTweenDataCallback(IAsyncResult ar)
+        {
+            ClientSocket.state = (StateObject)ar.AsyncState;
 
+            int bytesRead = ClientSocket.Socket.EndReceive(ar);
+            string data = Encoding.ASCII.GetString(ClientSocket.state.buffer, 0, bytesRead);
+
+            if (data.Contains("LiveTween"))
+            {
                 JMessage message = JMessage.Deserialize(data);
                 if (message.Type == typeof(Tween))
                 {
@@ -52,6 +64,8 @@ namespace Editor
                 {
                     throw new Exception();
                 }
+
+                ClientSocket.GetTweenData(this);
             }
         }
 
