@@ -1,8 +1,15 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+
+/* TODO:
+ * There should be a way to receive data asynchronously from the server, so that the player can continue
+ * playing the game while the server is running. I'll need to BeginReceive when the tween is created
+ * or something like that.
+ */
 
 namespace LiveTween
 {
@@ -26,16 +33,70 @@ namespace LiveTween
         public float Duration { get; set; }
 
         private bool isPlaying;
+        private string tweenData = string.Empty;
 
         /// <summary>
         /// Create a new tween.
         /// </summary>
         /// <param name="easingType">Which easing algorithm the current tween will use.</param>
         /// <param name="duration">How long the tween will play for in seconds.</param>
-        public Tween(EasingType easingType, float duration)
+        /// <param name="enableLiveTween">Whether or not to start accepting tween data from the LiveTween editor.</param>
+        public Tween(EasingType easingType, float duration, bool enableLiveTween)
         {
             EasingType = easingType;
             Duration = duration;
+
+            if (enableLiveTween)
+            {
+                if(Connect())
+                    StartListener();
+            }
+        }
+
+        /// <summary>
+        /// Waits for tween data to be sent from the editor using another thread.
+        /// </summary>
+        private void StartListener()
+        {
+            BackgroundWorker bgw = new BackgroundWorker();
+            bgw.DoWork += bgwDoWork;
+            bgw.RunWorkerCompleted += bgwRunWorkerCompleted;
+
+            bgw.RunWorkerAsync();
+        }
+
+        private void bgwDoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                byte[] bytes = new byte[1024];
+                int bytesRec = Socket.Receive(bytes);
+                tweenData = Encoding.ASCII.GetString(bytes, 0, bytesRec);
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+        private void bgwRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (tweenData.Contains("LiveTween"))
+            {
+                JMessage message = JMessage.Deserialize(tweenData);
+                if (message.Type == typeof(Tween))
+                {
+                    Tween temp = message.Value.ToObject<Tween>();
+                    Duration = temp.Duration;
+                    EasingType = temp.EasingType;
+
+                    Console.WriteLine("New Duration: " + Duration + ", New Easing Type: " + EasingType.ToString());
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
         }
 
         /// <summary>

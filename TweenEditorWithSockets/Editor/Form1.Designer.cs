@@ -54,6 +54,7 @@
             this.durationField.Size = new System.Drawing.Size(121, 20);
             this.durationField.TabIndex = 1;
             this.durationField.Visible = false;
+            this.durationField.Leave += new System.EventHandler(this.UpdateTween);
             // 
             // easeTypeField
             // 

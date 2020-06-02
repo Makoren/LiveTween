@@ -13,6 +13,7 @@ namespace Editor
     public partial class Form1 : Form
     {
         private static string tweenData = string.Empty;
+        private static Tween tween = null;
 
         public Form1()
         {
@@ -57,7 +58,7 @@ namespace Editor
 
         private void tdwDoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            byte[] bytes = new byte[256];
+            byte[] bytes = new byte[1024];
             int bytesRec = ClientSocket.Socket.Receive(bytes);
             tweenData = Encoding.ASCII.GetString(bytes, 0, bytesRec);
         }
@@ -77,6 +78,21 @@ namespace Editor
                 {
                     throw new Exception();
                 }
+            }
+        }
+
+        private void UpdateTween(object sender, EventArgs e)
+        {
+            if (tween != null)
+            {
+                string tweenData = JMessage.Serialize(JMessage.FromValue(tween));
+
+                byte[] msg = Encoding.ASCII.GetBytes(tweenData);
+                ClientSocket.Socket.Send(msg);
+            }
+            else
+            {
+                Console.WriteLine("Tween data is empty. Cannot send.");
             }
         }
     }

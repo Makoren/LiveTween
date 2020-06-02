@@ -13,7 +13,7 @@ public class ServerSocket
     private static Socket gameSocket;
 
     public static void StartListening()
-    {  
+    {
         byte[] bytes = new Byte[1024];
 
         IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
@@ -37,8 +37,7 @@ public class ServerSocket
             Console.WriteLine(e.ToString());
         }
 
-        Console.WriteLine("\nPress ENTER to continue...");
-        Console.Read();
+        Console.ReadKey(true);
     }
 
     private static void WaitForTweenData(byte[] bytes)

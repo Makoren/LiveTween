@@ -18,9 +18,7 @@ namespace Project2D
             logo = LoadImage("../Images/aie-logo-dark.jpg");
             texture = LoadTextureFromImage(logo);
 
-            ConnectToEditor();
-
-            tween = new Tween(EasingType.Linear, 1);
+            tween = new Tween(EasingType.Linear, 1, true);
         }
 
         public void Shutdown()
