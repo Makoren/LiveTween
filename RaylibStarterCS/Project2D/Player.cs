@@ -32,7 +32,18 @@ namespace Project2D
 
         public void Update()
         {
+            if (IsKeyPressed(KeyboardKey.KEY_ENTER))
+            {
+                if (Tween.Socket.Connected)
+                    tween.Link();
+            }
 
+            if (IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))
+            {
+                tween.Play(X, Y, GetMouseX(), GetMouseY());
+            }
+
+            tween.Update();
         }
 
         public void Draw()

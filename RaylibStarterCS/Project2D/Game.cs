@@ -12,7 +12,6 @@ namespace Project2D
         string logText = string.Empty;
 
         Player player;
-        Tween tween;
 
         public void Init()
         {
@@ -20,7 +19,6 @@ namespace Project2D
             texture = LoadTextureFromImage(logo);
 
             player = new Player();
-            tween = new Tween(EasingType.Linear, 1, true);
         }
 
         public void Shutdown()
@@ -31,14 +29,9 @@ namespace Project2D
         {
             if (IsKeyPressed(KeyboardKey.KEY_ENTER))
             {
-                if (Tween.Socket.Connected)
-                    tween.Link();
-                else
+                if (!Tween.Socket.Connected)
                     ConnectToEditor();
             }
-
-            //if (IsKeyPressed(KeyboardKey.KEY_SPACE))
-            //tween.Play();
 
             player.Update();
         }

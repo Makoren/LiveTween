@@ -64,6 +64,7 @@ namespace LiveTween
             }
         }
 
+        #region Listener
         /// <summary>
         /// Waits for tween data to be sent from the editor using another thread.
         /// </summary>
@@ -111,6 +112,7 @@ namespace LiveTween
 
             bgw.RunWorkerAsync();
         }
+        #endregion
 
         /// <summary>
         /// Play this tween using its current properties.
@@ -122,8 +124,25 @@ namespace LiveTween
                 return;
             else
                 isPlaying = true;
+        }
 
-            
+        /// <summary>
+        /// Checks if the tween is playing, and if true, updates the properties.
+        /// </summary>
+        public void Update()
+        {
+            /* TODO:
+             * If isPlaying, then update the property. This is going to require a bit of thought, here are my current thoughts:
+             * 
+             * - I probably need to store the start and end values in a property. For the sake of scope, perhaps this
+             * should only work on X and Y coordinates.
+             * 
+             * - I need to figure out how to position the object based on the duration as it ticks down.
+             * 
+             * Definitely reference tween.js or ask Finn if you're stuck.
+             */
+
+
         }
 
         /// <summary>
