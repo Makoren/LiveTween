@@ -11,6 +11,7 @@ namespace Project2D
         Texture2D texture;
         string logText = string.Empty;
 
+        Player player;
         Tween tween;
 
         public void Init()
@@ -18,6 +19,7 @@ namespace Project2D
             logo = LoadImage("../Images/aie-logo-dark.jpg");
             texture = LoadTextureFromImage(logo);
 
+            player = new Player();
             tween = new Tween(EasingType.Linear, 1, true);
         }
 
@@ -35,8 +37,10 @@ namespace Project2D
                     ConnectToEditor();
             }
 
-            if (IsKeyPressed(KeyboardKey.KEY_SPACE))
-                tween.Play();
+            //if (IsKeyPressed(KeyboardKey.KEY_SPACE))
+            //tween.Play();
+
+            player.Update();
         }
 
         public void Draw()
@@ -47,6 +51,8 @@ namespace Project2D
 
             DrawText("ENTER - Link tween to editor\nSPACE - Play tween\nESCAPE - Quit game", 32, 32, 16, Color.DARKGRAY);
             DrawText(logText, GetScreenWidth() - 200, 32, 16, Color.DARKGRAY);
+
+            player.Draw();
 
             EndDrawing();
         }

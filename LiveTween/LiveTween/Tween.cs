@@ -115,9 +115,15 @@ namespace LiveTween
         /// <summary>
         /// Play this tween using its current properties.
         /// </summary>
-        public void Play()
+        public void Play(float startX, float startY, float toX, float toY)
         {
-            Console.WriteLine("Playing!");
+            // don't play if it's already playing
+            if (isPlaying)
+                return;
+            else
+                isPlaying = true;
+
+            
         }
 
         /// <summary>
