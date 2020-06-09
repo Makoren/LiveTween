@@ -14,14 +14,16 @@ namespace Project2D
         public int X { get; private set; }
         public int Y { get; private set; }
 
-        private Tween tween;
+        private Tween tweenX;
+        private Tween tweenY;
 
         public Player()
         {
             X = 100;
             Y = 300;
 
-            tween = new Tween(EasingType.Linear, 1, true);
+            tweenX = new Tween(EasingType.Quadratic, 1, true);
+            tweenY = new Tween(EasingType.Quadratic, 1, true);
         }
 
         public Player(int x, int y) : this()
@@ -30,20 +32,25 @@ namespace Project2D
             Y = y;
         }
 
-        public void Update()
+        public void Update(float deltaTime)
         {
             if (IsKeyPressed(KeyboardKey.KEY_ENTER))
             {
                 if (Tween.Socket.Connected)
-                    tween.Link();
+                    tweenX.Link();
             }
 
             if (IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))
             {
-                tween.Play(X, Y, GetMouseX(), GetMouseY());
+                tweenX.Play(X, GetMouseX());
+                tweenY.Play(Y, GetMouseY());
             }
 
-            tween.Update();
+            // Only one tween can interact with the editor at a time, so tweenX gets the properties and copies them to tweenY.
+            tweenY.CopyFrom(tweenX);
+
+            if (tweenX.IsPlaying) X = (int)tweenX.Update(deltaTime);
+            if (tweenY.IsPlaying) Y = (int)tweenY.Update(deltaTime);
         }
 
         public void Draw()

@@ -33,7 +33,7 @@ namespace Project2D
                     ConnectToEditor();
             }
 
-            player.Update();
+            player.Update(GetFrameTime());
         }
 
         public void Draw()

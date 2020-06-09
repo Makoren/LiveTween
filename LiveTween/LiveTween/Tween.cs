@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 
 /* TODO:
@@ -31,8 +32,13 @@ namespace LiveTween
 
         public EasingType EasingType { get; set; }
         public float Duration { get; set; }
+        public bool IsPlaying { get; set; }
 
-        private bool isPlaying;
+        private float start;
+        private float destination;
+        private float t = 0;
+        private float uhhh = 0;
+
         private string tweenData = string.Empty;
 
         private BackgroundWorker bgw;
@@ -114,35 +120,51 @@ namespace LiveTween
         }
         #endregion
 
+        private float GetEasingFormula(float t)
+        {
+            switch (EasingType)
+            {
+                case EasingType.Linear:
+                    return t;
+                case EasingType.Quadratic:
+                    return t < 0.5 ? 2 * t * t : 1 - (float)Math.Pow(-2 * t + 2, 2) / 2;
+                default:
+                    return t;
+            }
+        }
+
         /// <summary>
         /// Play this tween using its current properties.
         /// </summary>
-        public void Play(float startX, float startY, float toX, float toY)
+        public void Play(float fromValue, float toValue)
         {
-            // don't play if it's already playing
-            if (isPlaying)
-                return;
-            else
-                isPlaying = true;
+            if (!IsPlaying)
+            {
+                IsPlaying = true;
+                start = fromValue;
+                destination = toValue;
+            }
         }
 
         /// <summary>
         /// Checks if the tween is playing, and if true, updates the properties.
         /// </summary>
-        public void Update()
+        public float Update(float deltaTime)
         {
-            /* TODO:
-             * If isPlaying, then update the property. This is going to require a bit of thought, here are my current thoughts:
-             * 
-             * - I probably need to store the start and end values in a property. For the sake of scope, perhaps this
-             * should only work on X and Y coordinates.
-             * 
-             * - I need to figure out how to position the object based on the duration as it ticks down.
-             * 
-             * Definitely reference tween.js or ask Finn if you're stuck.
-             */
+            if (IsPlaying)
+            {
+                t += (1 / Duration) * deltaTime;
+                uhhh = GetEasingFormula(t);
+            }
 
+            if (t >= 1)
+            {
+                IsPlaying = false;
+                t = 0;
+                start = destination;
+            }
 
+            return start * (1 - uhhh) + destination * uhhh;
         }
 
         /// <summary>
@@ -156,6 +178,16 @@ namespace LiveTween
 
             byte[] msg = Encoding.ASCII.GetBytes(tweenData);
             int bytesSent = Socket.Send(msg);
+        }
+
+        /// <summary>
+        /// Copy the properties from another tween.
+        /// </summary>
+        /// <param name="tween">The tween to copy properties from.</param>
+        public void CopyFrom(Tween tween)
+        {
+            Duration = tween.Duration;
+            EasingType = tween.EasingType;
         }
 
         /// <summary>
