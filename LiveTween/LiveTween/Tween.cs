@@ -6,12 +6,6 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 
-/* TODO:
- * There should be a way to receive data asynchronously from the server, so that the player can continue
- * playing the game while the server is running. I'll need to BeginReceive when the tween is created
- * or something like that.
- */
-
 namespace LiveTween
 {
     /// <summary>

@@ -42,7 +42,7 @@ namespace Project2D
 
             ClearBackground(Color.WHITE);
 
-            DrawText("ENTER - Link tween to editor\nSPACE - Play tween\nESCAPE - Quit game", 32, 32, 16, Color.DARKGRAY);
+            DrawText("ENTER - Send tween data to editor\nLEFT CLICK - Tween to mouse position\nESCAPE - Quit game", 32, 32, 24, Color.DARKGRAY);
             DrawText(logText, GetScreenWidth() - 200, 32, 16, Color.DARKGRAY);
 
             player.Draw();
