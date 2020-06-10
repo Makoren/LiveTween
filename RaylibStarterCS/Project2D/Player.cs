@@ -23,7 +23,7 @@ namespace Project2D
             Y = 300;
 
             tweenX = new Tween(EasingType.Quadratic, 1, true);
-            tweenY = new Tween(EasingType.Quadratic, 1, true);
+            tweenY = new Tween(EasingType.Quadratic, 1, false);
         }
 
         public Player(int x, int y) : this()

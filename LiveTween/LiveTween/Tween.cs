@@ -67,8 +67,15 @@ namespace LiveTween
 
             if (enableLiveTween)
             {
-                if(Connect())
-                    StartListener();
+                if (Socket == null || !Socket.Connected)
+                {
+                    if (Connect())
+                        StartListener();
+                }
+                else
+                {
+                    Console.WriteLine("Only one tween can be connected at a time.");
+                }
             }
         }
 
