@@ -216,7 +216,7 @@ namespace LiveTween
             Console.WriteLine(tweenData);
 
             byte[] msg = Encoding.ASCII.GetBytes(tweenData);
-            if (Socket != null || !Socket.Connected)
+            if (Socket == null || !Socket.Connected)
                 Console.WriteLine("Socket not connected.");
             else
                 Socket.Send(msg);
