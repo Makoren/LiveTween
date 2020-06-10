@@ -61,7 +61,13 @@ public class ServerSocket
         StateObject editorState = (StateObject)ar.AsyncState;
 
         int bytesRec = editorSocket.EndReceive(ar);
-        editorData = Encoding.ASCII.GetString(editorState.buffer, 0, bytesRec);
+
+        if (bytesRec > 0)
+        {
+            editorState.sb.Append(Encoding.ASCII.GetString(editorState.buffer), 0, bytesRec);
+        }
+
+        editorData = editorState.sb.ToString();
 
         // Crappy data validation that works but doesn't require JSON parsing
         if (editorData.Contains("LiveTween"))
@@ -69,6 +75,10 @@ public class ServerSocket
             Console.WriteLine("Received valid data from editor. Sending to game...");
             byte[] buffer = Encoding.ASCII.GetBytes(editorData);
             gameSocket.Send(buffer);
+        }
+        else
+        {
+            Console.WriteLine("Invalid data received from editor.");
         }
 
         WaitForTweenDataFromEditor();
@@ -79,7 +89,13 @@ public class ServerSocket
         StateObject gameState = (StateObject)ar.AsyncState;
 
         int bytesRec = gameSocket.EndReceive(ar);
-        gameData = Encoding.ASCII.GetString(gameState.buffer, 0, bytesRec);
+
+        if (bytesRec > 0)
+        {
+            gameState.sb.Append(Encoding.ASCII.GetString(gameState.buffer), 0, bytesRec);
+        }
+
+        gameData = gameState.sb.ToString();
 
         // Crappy data validation that works but doesn't require JSON parsing
         if (gameData.Contains("LiveTween"))
@@ -87,6 +103,10 @@ public class ServerSocket
             Console.WriteLine("Received valid data from game. Sending to editor...");
             byte[] buffer = Encoding.ASCII.GetBytes(gameData);
             editorSocket.Send(buffer);
+        }
+        else
+        {
+            Console.WriteLine("Invalid data received from game.");
         }
 
         WaitForTweenDataFromGame();

@@ -32,6 +32,8 @@ namespace LiveTween
 
         public EasingType EasingType { get; set; }
         public float Duration { get; set; }
+
+        [JsonIgnore]
         public bool IsPlaying { get; set; }
 
         private float start;
@@ -177,7 +179,10 @@ namespace LiveTween
             Console.WriteLine(tweenData);
 
             byte[] msg = Encoding.ASCII.GetBytes(tweenData);
-            int bytesSent = Socket.Send(msg);
+            if (Socket.Connected)
+                Socket.Send(msg);   // this is the game, the editor cant send data to the game either, sure
+            else
+                Console.WriteLine("Socket not connected.");
         }
 
         /// <summary>
