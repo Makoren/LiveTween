@@ -20,7 +20,9 @@ namespace LiveTween
     public enum EasingType
     {
         Linear,
-        Quadratic
+        Quadratic,
+        Elastic,
+        Bounce
     }
 
     /// <summary>
@@ -137,6 +139,34 @@ namespace LiveTween
                     return t;
                 case EasingType.Quadratic:
                     return t < 0.5 ? 2 * t * t : 1 - (float)Math.Pow(-2 * t + 2, 2) / 2;
+                case EasingType.Elastic:
+                    float c4 = (2 * (float)Math.PI) / 3;
+
+                    return t == 0
+                      ? 0
+                      : t == 1
+                      ? 1
+                      : (float)Math.Pow(2, -10 * t) * (float)Math.Sin((t * 10 - 0.75) * c4) + 1;
+                case EasingType.Bounce:
+                    float n1 = 7.5625f;
+                    float d1 = 2.75f;
+
+                    if (t < 1 / d1)
+                    {
+                        return n1 * t * t;
+                    }
+                    else if (t < 2 / d1)
+                    {
+                        return n1 * (t -= 1.5f / d1) * t + 0.75f;
+                    }
+                    else if (t < 2.5 / d1)
+                    {
+                        return n1 * (t -= 2.25f / d1) * t + 0.9375f;
+                    }
+                    else
+                    {
+                        return n1 * (t -= 2.625f / d1) * t + 0.984375f;
+                    }
                 default:
                     return t;
             }
