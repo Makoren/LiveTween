@@ -19,15 +19,6 @@ namespace Editor
         {
             InitializeComponent();
 
-            try
-            {
-                //Process.Start("server.exe");    // doesn't exist yet!
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("Could not launch the server! Make sure server.exe is in the same directory as this program.");
-            }
-
             // Populate the combo box with the enum values
             foreach (var item in Enum.GetValues(typeof(EasingType)))
             {
@@ -84,12 +75,20 @@ namespace Editor
         private void UpdateTween(object sender, EventArgs e)
         {
             Tween tween = new Tween();
-            tween.Duration = float.Parse(durationField.Text);
-            tween.EasingType = (EasingType)Enum.Parse(typeof(EasingType), easeTypeField.Text);
-            string tweenData = JMessage.Serialize(JMessage.FromValue(tween));
 
-            byte[] msg = Encoding.ASCII.GetBytes(tweenData);
-            ClientSocket.Socket.Send(msg);
+            try
+            {
+                tween.Duration = float.Parse(durationField.Text);
+                tween.EasingType = (EasingType)Enum.Parse(typeof(EasingType), easeTypeField.Text);
+                string tweenData = JMessage.Serialize(JMessage.FromValue(tween));
+
+                byte[] msg = Encoding.ASCII.GetBytes(tweenData);
+                ClientSocket.Socket.Send(msg);
+            }
+            catch
+            {
+                MessageBox.Show("Could not update tween. Make sure all fields are filled out.");
+            }
         }
     }
 }
