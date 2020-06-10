@@ -216,10 +216,10 @@ namespace LiveTween
             Console.WriteLine(tweenData);
 
             byte[] msg = Encoding.ASCII.GetBytes(tweenData);
-            if (Socket.Connected)
-                Socket.Send(msg);   // this is the game, the editor cant send data to the game either, sure
-            else
+            if (Socket != null || !Socket.Connected)
                 Console.WriteLine("Socket not connected.");
+            else
+                Socket.Send(msg);
         }
 
         /// <summary>
